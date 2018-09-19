@@ -1,3 +1,3 @@
 Com o arquivo teste.txt no diretório...
-    Para compilar -> g++ -std=c++11 so.cpp -o so
+    Para compilar -> g++ -std=c++11 so.cpp -o so |
     Para executar -> ./so ou so
