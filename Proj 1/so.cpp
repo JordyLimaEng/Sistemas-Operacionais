@@ -3,7 +3,7 @@
 *Matrícula: 11426758
 *Implementação de Escalonadores FCFS, SJF e RR com q=2.
 *Sistemas Operacionais - 2018.1
-********************/*
+********************/
 
 #include <iostream>
 #include <fstream>
