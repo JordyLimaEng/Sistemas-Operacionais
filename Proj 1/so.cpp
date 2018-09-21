@@ -132,7 +132,8 @@ int Maior(const std::vector<int>& vec){
     };
 
     vector<Lista_proc> Processos;
-    //Lista_proc temp;
+    vector<Lista_proc> Processos_ord_p;
+    
 
     for(int x=0; x<Tmp_pico.size(); x++){
     	Processos.push_back(Lista_proc());
@@ -144,6 +145,20 @@ int Maior(const std::vector<int>& vec){
     	cout << Processos[x].Tmp_ch_SJF << " "<< Processos[x].Tmp_p_SJF; 
     	cout << " " << Processos[x].ind << endl;
     }
+    cout<<endl;
+
+    //Ordena de acordo com o tempo de pico
+    sort(begin(Processos), end(Processos), [](const Lista_proc &a, const Lista_proc &b){return a.Tmp_p_SJF < b.Tmp_p_SJF;});
+    
+    for(int x=0; x<Tmp_pico.size(); x++){
+    	cout << Processos[x].Tmp_ch_SJF << " "<< Processos[x].Tmp_p_SJF; 
+    	cout << " " << Processos[x].ind << endl;
+    }
+
+
+
+
+
 
 //############# FIM SJF ###############
 	/*retorno = t.terminar        - t.chegada
