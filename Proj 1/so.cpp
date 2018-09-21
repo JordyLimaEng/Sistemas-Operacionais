@@ -3,7 +3,7 @@
 *Matrícula: 11426758
 *Implementação de Escalonadores FCFS, SJF e RR com q=2.
 *Sistemas Operacionais - 2018.1
-********************/*
+********************/
 
 #include <iostream>
 #include <fstream>
@@ -19,6 +19,14 @@ int Menor(const std::vector<int>& vec){
       Menor = std::min(Menor, vec[i]);
     }
     return Menor;
+}
+
+int Maior(const std::vector<int>& vec){
+    int Maior = std::numeric_limits<int>::max(); 
+    for (int i = 0; i < vec.size(); ++i){
+      Maior = std::max(Maior, vec[i]);
+    }
+    return Maior;
 }
 
  int main()
@@ -54,9 +62,8 @@ int Menor(const std::vector<int>& vec){
     vector<int> Tmp_chegada_FCFS;
     vector<int> Exec_p_FCFS;
     vector<int> Exec_ch_FCFS;
-    vector<int> somas_FCFS;
 
-    Tmp_pico_FCFS = Tmp_pico;
+    Tmp_pico_FCFS    = Tmp_pico;
     Tmp_chegada_FCFS = Tmp_chegada;
 
     cout << "tempo de chegada FCFS" << " : " ;
@@ -80,9 +87,8 @@ int Menor(const std::vector<int>& vec){
     pos_menor = distance(Tmp_chegada_FCFS.begin(),min_element(Tmp_chegada_FCFS.begin(),Tmp_chegada_FCFS.end()));
     
     valor_pico_menor = Tmp_pico_FCFS[pos_menor];
-
-    //cout << endl << valor_menor << ", "<< pos_menor << endl;
-
+    
+    //Fila que armazena os já executados
     Exec_ch_FCFS.push_back(valor_menor); //armazena os tempos de chegada em ordem
     Exec_p_FCFS.push_back(valor_pico_menor); // armazena os tempos de pico em ordem
 
@@ -114,6 +120,32 @@ int Menor(const std::vector<int>& vec){
   }
 //############# FIM FCFS ##############
 
+//############# SJF ###################
+  	vector<int> Tmp_chegada_SJF = Tmp_chegada;
+  	vector<int> Tmp_pico_SJF = Tmp_pico;
+
+  	struct Lista_proc
+    {
+    	int Tmp_ch_SJF=0;
+    	int Tmp_p_SJF=0;
+    	int ind=0;
+    };
+
+    vector<Lista_proc> Processos;
+    //Lista_proc temp;
+
+    for(int x=0; x<Tmp_pico.size(); x++){
+    	Processos.push_back(Lista_proc());
+    	Processos[x].Tmp_ch_SJF = Tmp_chegada_SJF[x];
+    	Processos[x].Tmp_p_SJF = Tmp_pico_SJF[x];
+    	Processos[x].ind = x+1;
+    }
+    for(int x=0; x<Tmp_pico.size(); x++){
+    	cout << Processos[x].Tmp_ch_SJF << " "<< Processos[x].Tmp_p_SJF; 
+    	cout << " " << Processos[x].ind << endl;
+    }
+
+//############# FIM SJF ###############
 	/*retorno = t.terminar        - t.chegada
 	  resposta= t.pico.anterior   - t.chegada
 	  espera  = t.fila(acumulado) - t.chegada*/
