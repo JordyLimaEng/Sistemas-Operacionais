@@ -147,15 +147,17 @@ void SJF(vector<Processo*> p){
     double espera=0;
     int n=0;
 
-    while (v.size()){
-        std::sort(v.begin(), v.end(), [](const Processo*  a, const Processo*  b) -> bool{ return a->T_pico < b->T_pico; });
+    while (v.size()){ //Enquanto o número de processos exeutando foi maior que zero
+        //Ordena em ordem crescente de Tempo de pico
+        std::sort(v.begin(), v.end(), [](const Processo*  a, const Processo*  b) -> bool{ return a->T_pico < b->T_pico; }); 
 
-        for(auto& proc:v){
-            if(espera >= proc->T_chegada){
-                proc->T_executou = proc->T_pico;
-                proc->T_resposta = proc->T_espera = espera - proc->T_chegada;
-                espera += proc->T_executou;
-                v.erase(v.begin()+n);
+        for(auto& proc:v){ //Percorre o vetor de processos
+            if(espera >= proc->T_chegada){ //se o tempo atual for maior ou igual ao tempo de chegada do processo
+                proc->T_executou = proc->T_pico; //Processo executa seu tempo de pico
+                proc->T_resposta = proc->T_espera = espera - proc->T_chegada; //Tempo de resposta do processo é
+                //igual ao tempo atual menos o tempo de chegada do processo
+                espera += proc->T_executou; // tempo atual incrementa de acordo com a execução dos processos
+                v.erase(v.begin()+n); //tira da fila de wait quando executar.
                 break;
             }
             n++;
@@ -163,11 +165,15 @@ void SJF(vector<Processo*> p){
         n=0;
     }
 
-    for(auto& proc: p){
+    for(auto& proc: p){// Faz o tempo de retorno, soma dos picos e cada
+        //processo com o tempo de resposta de cada um.
         proc->T_retorno = proc->T_pico + proc->T_resposta;
     }
 
     double Espera_media=0, Retorno_medio=0, Resposta_media=0, Soma=0;
+    
+    //percorre cada elemento de Processos e acumula a soma dos campos em Soma
+    //para cálculo da média.
 
     std::for_each(p.begin(), p.end(), [&] (Processo* p) { Soma += p->T_espera; });
     Espera_media = Soma/p.size();
