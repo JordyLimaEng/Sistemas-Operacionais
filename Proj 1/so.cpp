@@ -13,6 +13,23 @@
 
  using namespace std;
 
+
+ class Processo{
+    public:
+        int ID;
+        double T_pico, T_retorno, T_chegada, T_espera, T_resposta, T_executou, T_finalizado;
+        Processo(int id, double chegada, double pico){
+            ID=id;
+            T_chegada = chegada;
+            T_pico = pico;
+            T_resposta = T_retorno = T_finalizado = T_executou = T_espera = 0;
+        }
+ };
+
+void Limpa(std::vector<Processo*> p){
+    for (auto& p1: p) p1->T_resposta = p1->T_retorno = p1->T_finalizado = p1->T_executou = p1->T_espera = 0;
+}
+
 int Menor(const std::vector<int>& vec){
     int Menor = std::numeric_limits<int>::max(); 
     for (int i = 0; i < vec.size(); ++i){
@@ -29,8 +46,7 @@ int Maior(const std::vector<int>& vec){
     return Maior;
 }
 
- int main()
- {
+void FCFS(void){
     ifstream Arq;
     int i=0, x=0, y=0, dados_Arq=0;
     vector<int> Tabela;
@@ -74,11 +90,11 @@ int Maior(const std::vector<int>& vec){
     for(int j = 0; j < i/2; j++){
         cout << Tmp_pico_FCFS[j] << ", ";
     }
-	cout << endl;
+    cout << endl;
     int valor_menor=0, valor_pico_menor=0, ind=0,  aux=0;
-	int pos_menor=0, pos_pico_menor=0, Acumula2=0, Acumula=0;
+    int pos_menor=0, pos_pico_menor=0, Acumula2=0, Acumula=0;
     double TesperaMed=0, Tespera=0;
-	double Tretorno=0;
+    double Tretorno=0;
 
     //cout << "\nTespera";
     while (Tmp_pico_FCFS.size() > 0){
@@ -98,20 +114,20 @@ int Maior(const std::vector<int>& vec){
       TesperaMed = Tespera;
       aux++;
     }else{
-    	Acumula += Exec_p_FCFS[ind-1];
-    	Tespera = Acumula - Exec_ch_FCFS[ind];
-    	TesperaMed += Tespera;
-    	aux++;
+        Acumula += Exec_p_FCFS[ind-1];
+        Tespera = Acumula - Exec_ch_FCFS[ind];
+        TesperaMed += Tespera;
+        aux++;
     }
     
-  	//Calcula os tempos de retorno
-	if(Exec_ch_FCFS.size() == 1){
-		Tretorno = Exec_p_FCFS[ind] - Exec_ch_FCFS[ind];
-		Acumula2 = Tretorno;
-	}else{
-		Acumula2 += Exec_p_FCFS[ind];
-		Tretorno += (Acumula2 - Exec_ch_FCFS[ind]);
-	}
+    //Calcula os tempos de retorno
+    if(Exec_ch_FCFS.size() == 1){
+        Tretorno = Exec_p_FCFS[ind] - Exec_ch_FCFS[ind];
+        Acumula2 = Tretorno;
+    }else{
+        Acumula2 += Exec_p_FCFS[ind];
+        Tretorno += (Acumula2 - Exec_ch_FCFS[ind]);
+    }
 
     //apaga o menor valor e posição, como se fosse uma execução no cpu
     Tmp_chegada_FCFS.erase(Tmp_chegada_FCFS.begin()+pos_menor);
@@ -119,57 +135,80 @@ int Maior(const std::vector<int>& vec){
     ind++;
   }
 //############# FIM FCFS ##############
+    double TmedEsp = (TesperaMed / aux);
+    double TmedRet = (Tretorno / aux);
+    //Tret Medio fcfs|Tresp Medio|Tespera médio 
+    cout <<"\nFCFS " << TmedRet << " " << TmedEsp << " " << TmedEsp << endl;
+    cout.precision(5);
+}
 
-//############# SJF ###################
-  	vector<int> Tmp_chegada_SJF = Tmp_chegada;
-  	vector<int> Tmp_pico_SJF = Tmp_pico;
+void SJF(vector<Processo*> p){ 
+    vector<Processo*> v(p);
+    double espera=0;
+    int n=0;
 
-  	struct Lista_proc
-    {
-    	int Tmp_ch_SJF=0;
-    	int Tmp_p_SJF=0;
-    	int ind=0;
-    };
+    while (v.size()){
+        std::sort(v.begin(), v.end(), [](const Processo*  a, const Processo*  b) -> bool{ return a->T_pico < b->T_pico; });
 
-    vector<Lista_proc> Processos;
-    vector<Lista_proc> Processos_ord_p;
+        for(auto& proc:v){
+            if(espera >= proc->T_chegada){
+                proc->T_executou = proc->T_pico;
+                proc->T_resposta = proc->T_espera = espera - proc->T_chegada;
+                espera += proc->T_executou;
+                v.erase(v.begin()+n);
+                break;
+            }
+            n++;
+        }
+        n=0;
+    }
+
+    for(auto& proc: p){
+        proc->T_retorno = proc->T_pico + proc->T_resposta;
+    }
+
+    double Espera_media=0, Retorno_medio=0, Resposta_media=0, Soma=0;
+
+    std::for_each(p.begin(), p.end(), [&] (Processo* p) { Soma += p->T_espera; });
+    Espera_media = Soma/p.size();
+
+    Soma = 0;
+    std::for_each(p.begin(), p.end(), [&] (Processo* p) { Soma += p->T_retorno; });
+    Retorno_medio = Soma/p.size();
+
+    Soma = 0;
+    std::for_each(p.begin(), p.end(), [&] (Processo* p) { Soma += p->T_resposta; });
+    Resposta_media = Soma/p.size();
     
+    cout << "SJF " << Retorno_medio << " " << Resposta_media << " " << Espera_media << std::endl;
+    cout.precision(5);
+    Limpa(p);
+}
 
-    for(int x=0; x<Tmp_pico.size(); x++){
-    	Processos.push_back(Lista_proc());
-    	Processos[x].Tmp_ch_SJF = Tmp_chegada_SJF[x];
-    	Processos[x].Tmp_p_SJF = Tmp_pico_SJF[x];
-    	Processos[x].ind = x+1;
+ int main()
+ {
+    vector<Processo*> Processos;
+    double tmp1=-1, tmp2=-1;
+    Processo *p;
+    int i=0;
+
+    fstream arq("teste.txt", ifstream::in);
+
+    while(!arq.eof()){
+            arq >> tmp1 >> tmp2;
+        if( tmp1 >= 0 && tmp2 >= 0){
+            p = new Processo(i++,tmp1, tmp2);
+            Processos.push_back(p);
+        }
+        tmp1 = tmp2 = -1;
     }
-    for(int x=0; x<Tmp_pico.size(); x++){
-    	cout << Processos[x].Tmp_ch_SJF << " "<< Processos[x].Tmp_p_SJF; 
-    	cout << " " << Processos[x].ind << endl;
+
+    FCFS();
+  	SJF(Processos);
+
+    for (auto& p: Processos){
+        delete p;
     }
-    cout<<endl;
-
-    //Ordena de acordo com o tempo de pico
-    sort(begin(Processos), end(Processos), [](const Lista_proc &a, const Lista_proc &b){return a.Tmp_p_SJF < b.Tmp_p_SJF;});
-    
-    for(int x=0; x<Tmp_pico.size(); x++){
-    	cout << Processos[x].Tmp_ch_SJF << " "<< Processos[x].Tmp_p_SJF; 
-    	cout << " " << Processos[x].ind << endl;
-    }
-
-
-
-
-
-
-//############# FIM SJF ###############
-	/*retorno = t.terminar        - t.chegada
-	  resposta= t.pico.anterior   - t.chegada
-	  espera  = t.fila(acumulado) - t.chegada*/
-  
-	double TmedEsp = (TesperaMed / aux);
-	double TmedRet = (Tretorno / aux);
-	//Tret Medio fcfs|Tresp Medio|Tespera médio 
-	cout <<"\nFCFS " << TmedRet << " " << TmedEsp << " " << TmedEsp << endl;
-	cout.precision(5);
 
  return 0;
 }
