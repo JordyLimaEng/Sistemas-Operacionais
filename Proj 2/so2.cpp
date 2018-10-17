@@ -36,38 +36,17 @@ void FIFO(const std::vector<int>& Tabela_orig, int Tam_do_quadro, int Tam){
 	Tabela = Tabela_orig;
 	int Num_Falhas = 4, i=0, flag=0;
 
-
-	cout<< "na funcao FIFO" << endl;
-	for(int x=0; x<Tam; x++){
-    	cout << Tabela[x] << ", ";
-    }
-
     cout<<endl;
 
-    for(int j=0; j<4; j++){			//coloca na fila de execução de páginas os 4 primeiros
-    	cout << "Vai colocar - " << Tabela[0] << endl;
+    for(int j=0; j<4; j++){			//coloca em execução de páginas os 4 primeiros
     	Fila.push_back(Tabela[0]);
     	Tabela.erase(Tabela.begin());
     	--Tam;
     }
 
-    cout<<endl;
-
-    for(int x=0; x<Tam; x++){
-    	cout << Tabela[x] << ", ";
-    }
-
-    cout<<endl;
-
-    cout << "fila incial: " ;
-    for(int x=0; x<4; x++){
-    	cout << Fila[x] << " ,";
-    }
-
     i=0;
     int aux=0;
 
-    cout<<endl;
     for(int x=0; x<Tam;x++){
 
     	if(Tabela[x] == Fila[x]){
@@ -94,17 +73,74 @@ void FIFO(const std::vector<int>& Tabela_orig, int Tam_do_quadro, int Tam){
     		
     		aux = x-1;
     	  
-    	  if(aux>0){
-    	  	cout << "falha " << x+3 <<": " ;
-    		for(int xx=0; xx<4; xx++){
-    		cout << Fila[xx] << " ,";
-    		}
-    		    cout<<endl;
-    	   }	
     }    
+        cout << "FIFO " << Num_Falhas << endl;
+}
 
-    cout << "\n" << "FIFO " << Num_Falhas << endl;
-    
+void OTM(const std::vector<int>& Tabela_orig, int Tam_do_quadro, int Tam){
+	vector<int> Tabela;
+	vector<int>	Fila;
+	vector<int>	Compara;
+	vector<int> Indices;
+
+	for(int x=0; x<8; x++){
+		Indices.push_back(x+1);
+	}
+
+	Tabela = Tabela_orig;
+
+	int Num_Falhas = 4, i=0, flag=0;
+	bool loop = true;
+
+    for(int j=0; j<4; j++){			//coloca na fila de execução de páginas os 4 primeiros
+    	Fila.push_back(Tabela[0]);
+    	Tabela.erase(Tabela.begin());
+    	--Tam;
+    }
+
+    i=0;
+    int AuxT=Tam-1, y=0, aux=0;
+    int Troca;
+    int count=0;
+
+    cout<<endl;
+    while(loop){
+       for(int x=0; x<4; x++){
+    		if(Tabela[AuxT] == Fila[x]){
+    		  for(y=0; y<15;){
+    		  	for(int xx=0; xx<4; xx++){
+    				if(Tabela[y] == Fila[xx]){
+    					y++;
+    					Troca = 0;
+					}else if(Tabela[y] != Fila[xx] && Fila[xx] == Tabela[AuxT]){
+						auto it = Fila.begin();
+    					Fila.insert(it + xx, Tabela[y]);
+    					Fila.erase(Fila.begin()+(xx+1));
+    					Num_Falhas++;
+    					aux=y;
+    					y=15;
+    					Troca = 1;
+					}
+    		    }
+    		  }
+    		  y=0;
+    	  	}
+      	}
+      	count++;
+
+      	if(Troca == 1){
+      		AuxT=Tam;       		
+      		Troca=0;
+      		for(int x=0; x<aux; x++)
+      	   	Tabela.erase(Tabela.begin());
+      	}
+      	else{AuxT--;}      	
+
+       if(count == Tam){loop = false;}
+
+    }
+
+    cout <<"OTM "<< Num_Falhas << endl;
 
 }
 
@@ -128,6 +164,7 @@ void FIFO(const std::vector<int>& Tabela_orig, int Tam_do_quadro, int Tam){
     Tam = i;
 
     FIFO(Tabela, Tam_do_quadro, Tam);
+     OTM(Tabela, Tam_do_quadro, Tam);
 
     
  return 0;
