@@ -80,13 +80,6 @@ void FIFO(const std::vector<int>& Tabela_orig, int Tam_do_quadro, int Tam){
 void OTM(const std::vector<int>& Tabela_orig, int Tam_do_quadro, int Tam){
 	vector<int> Tabela;
 	vector<int>	Fila;
-	vector<int>	Compara;
-	vector<int> Indices;
-
-	for(int x=0; x<8; x++){
-		Indices.push_back(x+1);
-	}
-
 	Tabela = Tabela_orig;
 
 	int Num_Falhas = 4, i=0, flag=0;
