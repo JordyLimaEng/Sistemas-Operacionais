@@ -160,5 +160,5 @@ void OTM(const std::vector<int>& Tabela_orig, int Tam_do_quadro, int Tam){
      OTM(Tabela, Tam_do_quadro, Tam);
 
     
- return 0;
+ return 0; 
 }
